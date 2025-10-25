@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Women Empowerment - Aligned UI</title>
+<style>
+  /* RESET + BASE */
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg1:#082f49; --bg2:#0e5069;
+    --accent:#14b8a6; --sos:#ef4444; --card:#0f3b4a;
+    --glass: rgba(255,255,255,0.06);
+    --max-width:480px;
+    --ui-pad:18px;
+    --radius:14px;
+  }
+  body{
+    min-height:100vh;
+    font-family: "Poppins", Inter, system-ui, Arial;
+    background: linear-gradient(135deg,var(--bg1),var(--bg2));
+    color:#eaf8ff;
+    display:flex;
+    justify-content:center;
+    padding:28px 12px 120px; /* bottom space for fixed bottom nav */
+  }
+
+  /* PAGE WRAPPER (centers the main card) */
+  .page {
+    width:100%;
+    max-width:var(--max-width);
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    align-items:stretch;
+  }
+
+  /* HEADER */
+  header.app-header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px;
+    border-radius:12px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    backdrop-filter: blur(6px);
+  }
+  .left {
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .avatar{
+    width:44px;height:44px;border-radius:8px;border:2px solid rgba(255,255,255,0.12);
+    background:linear-gradient(180deg,#08323f,#0b4b60);
+    display:flex;align-items:center;justify-content:center;font-weight:700;
+  }
+  .title{font-weight:700;font-size:1rem;color:#e6f9ff}
+  .header-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+  .header-actions button{
+    padding:8px 12px;border-radius:20px;border:none;cursor:pointer;font-weight:700;
+    background: linear-gradient(90deg,#14b8a6,#0891b2); color:#012; box-shadow:0 8px 16px rgba(20,184,166,0.12)
+  }
+
+  /* MAIN CARD */
+  main.card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    border-radius:var(--radius);
+    padding:22px;
+    box-shadow: 0 18px 40px rgba(2,20,30,0.45);
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    position:relative;
+    overflow:visible;
+  }
+
+  .big-tile{
+    display:flex;gap:14px;align-items:center;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    padding:14px;border-radius:12px;
+    border:1px solid rgba(255,255,255,0.03);
+  }
+  .tile-icon{width:84px;height:84px;border-radius:10px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center}
+  .tile-icon img{width:56px;height:56px;object-fit:cover}
+  .tile-body h2{font-size:1.05rem;color:#dff6ff;margin-bottom:6px}
+  .tile-body p{color:#cceefc;font-weight:600;font-size:0.95rem}
+
+  /* SECTION BUTTON (full width) */
+  .section-wrap{display:flex;flex-direction:column;gap:10px}
+  #section1Btn{
+    width:100%;
+    padding:16px;
+    border-radius:12px;
+    border:none;
+    cursor:pointer;
+    font-weight:800;
+    font-size:1.05rem;
+    color:#022;
+    background: linear-gradient(90deg,#7EE787,#34D399);
+    box-shadow: 0 10px 30px rgba(52,211,153,0.12);
+    transition:transform .18s, box-shadow .18s;
+  }
+  #section1Btn:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(52,211,153,0.18)}
+
+  /* INFO PANEL */
+  .info-panel{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);
+    color: #dff6ff; font-weight:600;
+  }
+
+  /* ALERT (toast) */
+  .alert{
+    position:fixed; top:22px; right:22px;
+    padding:14px 18px;border-radius:10px;font-weight:700;display:none;
+    z-index:120;
+    box-shadow:0 8px 30px rgba(0,0,0,0.45);
+    backdrop-filter: blur(6px);
+  }
+  .alert.success{background:linear-gradient(90deg,#22c55e,#16a34a); color:#032}
+  .alert.error{background:linear-gradient(90deg,#ef4444,#b91c1c); color:#fff}
+
+  /* AI CHATBOT modal */
+  .ai-modal-backdrop{
+    position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+    background:rgba(0,0,0,0.45);z-index:200;
+  }
+  .ai-modal{
+    width:100%;max-width:420px;background:#fff;border-radius:12px;padding:18px;color:#042;
+    box-shadow:0 20px 50px rgba(2,20,30,0.45);
+  }
+  .ai-modal .messages{height:220px;overflow-y:auto;border-radius:8px;padding:8px;background:#f7fbff;border:1px solid #e6f3fb}
+  .ai-modal input{width:100%;padding:10px;border-radius:8px;border:1px solid #d7eaf7;margin-top:10px}
+
+  /* SOS + chatbot floating buttons */
+  .fab-container{position:fixed;right:20px;bottom:110px;display:flex;flex-direction:column;gap:12px;z-index:160}
+  #aiChatbotBtn{width:62px;height:62px;border-radius:50%;border:none;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 30px rgba(79,70,229,0.2)}
+  #sosBtn{background:linear-gradient(180deg,#ff6b6b,#ef4444);border:none;color:#fff;padding:14px 22px;border-radius:34px;font-weight:800;box-shadow:0 18px 40px rgba(239,68,68,0.18);cursor:pointer}
+  #sosBtn:disabled{opacity:.6;cursor:not-allowed}
+
+  /* BOTTOM NAV (fixed) */
+  .bottom-nav{
+    position:fixed;left:0;right:0;bottom:0;padding:10px 12px;background:linear-gradient(90deg,#0b3b53,#0e5069);
+    display:flex;justify-content:space-around;align-items:center;gap:8px;z-index:140;
+    box-shadow:0 -8px 30px rgba(2,20,30,0.45);
+  }
+  .nav-btn{display:flex;flex-direction:column;align-items:center;color:#e6f9ff;border:none;background:transparent;gap:6px}
+  .nav-btn span{font-size:11px;opacity:.9}
+
+  /* RESPONSIVE tweaks */
+  @media (max-width:420px){
+    body{padding:18px 10px 120px}
+    .page{gap:12px}
+    header.app-header{padding:10px}
+    .tile-icon{width:72px;height:72px}
+    .fab-container{right:14px;bottom:120px}
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- HEADER -->
+    <header class="app-header" role="banner">
+      <div class="left">
+        <div class="avatar">S</div>
+        <div>
+          <div class="title">Welcome <span id="userName">Guest</span></div>
+          <div style="font-size:12px;color:rgba(230,248,255,0.8)">Women Empowerment</div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="locationBtn" onclick="window.location.href='location.html'">Add Your Location</button>
+        <button id="fakeCallHeaderBtn">Fake-Call</button>
+      </div>
+    </header>
+
+    <!-- MAIN CARD -->
+    <main class="card" role="main">
+      <div class="big-tile">
+        <div class="tile-icon"><img src="https://cdn-icons-png.flaticon.com/512/2920/2920072.png" alt="shield" /></div>
+        <div class="tile-body">
+          <h2>SAFETY CHECK.</h2>
+          <p>Quick access to emergency actions and community alerts.</p>
+        </div>
+      </div>
+
+      <div class="section-wrap">
+        <button id="section1Btn" aria-label="Safety Check">Open Safety Toolbox</button>
+      </div>
+
+      <div class="info-panel">
+        <div style="font-weight:800;margin-bottom:6px;color:#bff1ff">How this works</div>
+        <div style="font-size:0.95rem;line-height:1.4">Use the Group Alert (SOS) to open a WhatsApp composer with your current location. The fake-call gives a quick way to simulate a call screen. AI Chatbot can help with safety tips and resources.</div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- TOAST ALERT -->
+  <div id="alertBox" class="alert" role="status" aria-live="polite"></div>
+
+  <!-- FABs -->
+  <div class="fab-container" aria-hidden="false">
+    <button id="aiChatbotBtn" title="AI Chatbot">💬</button>
+    <button id="sosBtn" title="Group Alert">🚨 SOS</button>
+  </div>
+
+  <!-- AI CHATBOT MODAL -->
+  <div id="aiChatbotModal" class="ai-modal-backdrop" aria-hidden="true">
+    <div class="ai-modal" role="dialog" aria-modal="true">
+      <h3 style="color:#16374a">Sakhi</h3>
+      <div id="chatbotMessages" class="messages" aria-live="polite"></div>
+      <input id="chatbotInput" type="text" placeholder="Type your question..." />
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+        <button id="chatbotSendBtn" style="background:linear-gradient(90deg,#6366f1,#4f46e5);color:#fff;padding:8px 12px;border-radius:8px;border:none">Send</button>
+        <button id="chatbotCloseBtn" style="background:#e6eef7;color:#042;padding:8px 12px;border-radius:8px;border:none">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav" aria-label="Bottom navigation">
+    <button class="nav-btn"><img src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png" width="34" height="34" alt=""><span>Home</span></button>
+    <button class="nav-btn"><img src="https://cdn-icons-png.flaticon.com/512/4870/4870340.png" width="34" height="34" alt=""><span>Alerts</span></button>
+    <button class="nav-btn"><img src="https://cdn-icons-png.flaticon.com/512/1828/1828911.png" width="34" height="34" alt=""><span>Profile</span></button>
+  </nav>
+
+<script>
+  // Simple helpers
+  function showAlert(msg, type = 'success') {
+    const box = document.getElementById('alertBox');
+    box.className = 'alert ' + (type === 'error' ? 'error' : 'success');
+    box.textContent = msg;
+    box.style.display = 'block';
+    setTimeout(()=> box.style.display='none', 4200);
+  }
+
+  // MOCK user name (replace server templating as needed)
+  document.getElementById('userName').textContent = (typeof window.USER_NAME !== 'undefined')? window.USER_NAME : 'Someone';
+
+  // AI Chatbot open/close
+  const aiModal = document.getElementById('aiChatbotModal');
+  document.getElementById('aiChatbotBtn').addEventListener('click', ()=> {
+    aiModal.style.display = 'flex'; aiModal.setAttribute('aria-hidden','false');
+  });
+  document.getElementById('chatbotCloseBtn').addEventListener('click', ()=> {
+    aiModal.style.display = 'none'; aiModal.setAttribute('aria-hidden','true');
+  });
+
+  // Chatbot send (mock)
+  document.getElementById('chatbotSendBtn').addEventListener('click', ()=> {
+    const input = document.getElementById('chatbotInput');
+    if(!input.value.trim()) return;
+    const box = document.getElementById('chatbotMessages');
+    const userMsg = document.createElement('div'); userMsg.style.textAlign='right';
+    userMsg.innerHTML = `<div style="display:inline-block;background:#e8fdf5;color:#023;padding:6px 10px;border-radius:8px;margin:6px 0">${input.value}</div>`;
+    box.appendChild(userMsg);
+    box.scrollTop = box.scrollHeight;
+    // simulate bot reply
+    setTimeout(()=> {
+      const botMsg = document.createElement('div'); botMsg.style.textAlign='left';
+      botMsg.innerHTML = `<div style="display:inline-block;background:#f1f6ff;color:#042;padding:6px 10px;border-radius:8px;margin:6px 0">Bot: Thanks — stay safe. Call 100 / share location with trusted contacts.</div>`;
+      box.appendChild(botMsg); box.scrollTop = box.scrollHeight;
+    }, 700);
+    input.value='';
+  });
+
+  // Fake-call popup (reused for any fake-call button)
+  function openFakeCallPopup() {
+    window.open('/fake_call.html','FakeCall','width=360,height=720,menubar=no,toolbar=no,location=no,status=no');
+  }
+  document.getElementById('fakeCallHeaderBtn').addEventListener('click', openFakeCallPopup);
+
+  // Group Alert (opens WhatsApp composer with location)
+  let currentPosition = null;
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos=>{
+      currentPosition = pos.coords;
+    }, ()=> { /* ignore; handled on SOS click */ }, {enableHighAccuracy:true, timeout:10000});
+  }
+
+  async function fetchGroupCode(){
+    try {
+      const res = await fetch('/api/group-invite');
+      if(!res.ok) return null;
+      const j = await res.json(); return j.code || null;
+    } catch(e){ return null; }
+  }
+
+  document.getElementById('sosBtn').addEventListener('click', async function(){
+    const btn = this; btn.disabled = true;
+    try {
+      let loc = currentPosition;
+      if(!loc && navigator.geolocation){
+        try {
+          const p = await new Promise((res, rej)=> navigator.geolocation.getCurrentPosition(res, rej, {enableHighAccuracy:true, timeout:8000}));
+          loc = p.coords;
+        } catch(e){}
+      }
+      const groupCode = await fetchGroupCode();
+      const name = 'Someone';
+      let message = `🚨 EMERGENCY ALERT from ${name}! I need help immediately.`;
+      if(loc && loc.latitude){
+        message += ` My location: https://www.google.com/maps?q=${loc.latitude},${loc.longitude}`;
+      } else { message += ` Location not available. Please call me.`; }
+      const encoded = encodeURIComponent(message);
+      if(groupCode){
+        window.open(`https://chat.whatsapp.com/${groupCode}`,'_blank');
+        window.open(`https://api.whatsapp.com/send?text=${encoded}`,'_blank');
+        showAlert('Opened group invite and composer. Paste/send in the group.', 'success');
+      } else {
+        window.open(`https://api.whatsapp.com/send?text=${encoded}`,'_blank');
+        showAlert('Opened WhatsApp composer with emergency message. Please select group/contact and send.', 'success');
+      }
+    } catch(err){
+      console.error(err); showAlert('Failed to open WhatsApp. Allow popups or try again.', 'error');
+    } finally { btn.disabled = false; }
+  });
+
+  // Section button (example navigation)
+  document.getElementById('section1Btn').addEventListener('click', ()=> {
+    window.location.href = '/ai_predicted';
+  });
+
+</script>
+</body>
+</html>

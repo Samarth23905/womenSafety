@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Location - SAKHI</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(180deg, #000000, #2c003e);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 20px;
+    }
+
+    form {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px 25px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+    }
+
+    form h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    textarea,
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 18px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    textarea {
+      resize: none;
+      height: 70px;
+    }
+
+    ::placeholder {
+      color: #d0d0d0;
+    }
+
+    .rating {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+    .star {
+      font-size: 2rem;
+      color: gray;
+      cursor: pointer;
+      transition: color 0.2s, transform 0.2s;
+    }
+
+    .star.selected {
+      color: gold;
+      transform: scale(1.1);
+    }
+
+    button {
+      width: 100%;
+      background: linear-gradient(90deg, #ff5cc8, #ff3ba7);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #ff3ba7, #ff5cc8);
+      transform: scale(1.03);
+    }
+  </style>
+</head>
+<body>
+  <form action="/location" method="post" enctype="multipart/form-data">
+    <h2>Add Area Details</h2>
+
+    <label for="location">Area Name:</label>
+    <input name="location" id="location" type="text" placeholder="Enter area name..." required>
+
+    <label for="area_img">Area Picture:</label>
+    <input name="area_img" type="file" id="area_img" accept="image/*">
+
+    <label for="description">Description:</label>
+    <textarea name="description" id="description" placeholder="Describe the area..."></textarea>
+
+    <label for="surrounding">Surrounding Areas:</label>
+    <input name="surrounding" type="text" id="surrounding" placeholder="Nearby places...">
+
+    <label for="rating">Safety Rating:</label>
+    <input type="hidden" name="rating" id="ratingInput" value="0">
+    <div class="rating">
+      <span class="star" data-value="1">&#9733;</span>
+      <span class="star" data-value="2">&#9733;</span>
+      <span class="star" data-value="3">&#9733;</span>
+      <span class="star" data-value="4">&#9733;</span>
+      <span class="star" data-value="5">&#9733;</span>
+    </div>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    const stars = document.querySelectorAll('.star');
+    stars.forEach(star => {
+      star.addEventListener('click', () => {
+        const rating = star.getAttribute('data-value');
+        stars.forEach(s => s.classList.remove('selected'));
+        for (let i = 0; i < rating; i++) {
+          stars[i].classList.add('selected');
+        }
+        document.getElementById('ratingInput').value = rating;
+        console.log(`User rated: ${rating}`);
+      });
+    });
+  </script>
+</body>
+</html>

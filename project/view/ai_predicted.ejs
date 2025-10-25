@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Predicted Flashmobs</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 16px; background:#f6f8fb; color:#111; }
+    .container { max-width:1100px; margin:0 auto; }
+    h1 { text-align:center; color:#0b74de; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; margin-top:16px; }
+    .card { background:white; padding:12px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.08); }
+    .card img { width:100%; height:160px; object-fit:cover; border-radius:6px; background:#eee; }
+    .meta { display:flex; justify-content:space-between; align-items:center; margin-top:8px; }
+    .title { font-weight:700; margin:6px 0; font-size:1.05rem; }
+    .desc { color:#444; font-size:0.95rem; }
+    .creds { font-size:0.9rem; color:#666; margin-top:8px; }
+    .rating { color:#f59e0b; font-weight:700; }
+    .actions { margin-top:10px; display:flex; gap:8px; }
+    .btn { padding:8px 10px; border-radius:6px; border:none; cursor:pointer; font-weight:600; }
+    .btn.map { background:#0b74de; color:white; }
+    .btn.copy { background:#e5e7eb; }
+    .empty { text-align:center; color:#666; margin-top:40px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Flashmobs (Reported locations)</h1>
+    <div id="flashGrid" class="grid">
+      <% if (!locations || locations.length === 0) { %>
+        <div class="empty">No locations yet.</div>
+      <% } else { %>
+        <% locations.forEach(function(loc) { %>
+          <div class="card">
+            <% let imgSrc = loc.area_img ? (loc.area_img.charAt(0) === '/' ? loc.area_img : '/' + loc.area_img) : null; %>
+            <% if (imgSrc) { %>
+              <img src="<%= imgSrc %>" alt="area image">
+            <% } else { %>
+              <img src="data:image/svg+xml;charset=utf-8,<%= encodeURIComponent('<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"400\"> <rect width=\"100%\" height=\"100%\" fill=\"#e6eefb\"/> <text x=\"50%\" y=\"50%\" fill=\"#9bb9e9\" font-size=\"20\" text-anchor=\"middle\" dominant-baseline=\"middle\">No Image</text></svg>') %>">
+            <% } %>
+
+            <div class="title"><%= loc.location_name || 'Unnamed location' %></div>
+            <div class="desc"><%= loc.description || loc.surrounding || 'No description' %></div>
+
+            <div class="meta">
+              <div style="font-size:0.85rem;color:#666;"><%= loc.created_at ? new Date(loc.created_at).toLocaleString() : '' %></div>
+              <div class="rating"><%= (loc.rating != null && loc.rating !== '') ? ('★ ' + loc.rating) : '' %></div>
+            </div>
+
+            <div class="creds">Reported by: <%= loc.user_name || 'Anonymous' %><% if (loc.user_number) { %> • <%= loc.user_number %><% } %></div>
+
+            <div class="actions">
+              <button class="btn copy"
+                data-location-name="<%= (loc.location_name||'') %>"
+                data-desc="<%= (loc.description||'') %>"
+                data-user="<%= (loc.user_name||'') %>"
+                data-phone="<%= (loc.user_number||'') %>"
+                data-lat="<%= (loc.latitude!=null?loc.latitude:'') %>"
+                data-lon="<%= (loc.longitude!=null?loc.longitude:'') %>"
+                onclick="copyInfoFromBtn(this)">Copy Info</button>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+  </div>
+
+  <script>
+    function copyInfoFromBtn(btn) {
+      const name = btn.dataset.locationName || '';
+      const desc = btn.dataset.desc || '';
+      const user = btn.dataset.user || '';
+      const phone = btn.dataset.phone ? (' • ' + btn.dataset.phone) : '';
+      const lat = btn.dataset.lat;
+      const lon = btn.dataset.lon;
+      const map = (lat && lon) ? ('\nhttps://www.google.com/maps?q=' + lat + ',' + lon) : '';
+      const text = `${name}\n${desc}\nBy: ${user}${phone}${map}`;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(()=> alert('Copied'), ()=> alert('Copy failed'));
+      } else {
+        alert('Clipboard API not available');
+      }
+    }
+  </script>
+</body>
+</html>

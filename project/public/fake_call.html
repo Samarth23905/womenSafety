@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fake Call</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(180deg, #004e92, #000428);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #fff;
+    overflow: hidden;
+  }
+
+  /* Top caller info */
+  .caller-info {
+    text-align: center;
+    margin-top: 80px;
+    animation: fadeIn 0.8s ease-in;
+  }
+  .caller-name {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .status {
+    font-size: 1.2rem;
+    opacity: 0.85;
+  }
+
+  /* Caller image (optional placeholder circle) */
+  .caller-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #ffffff44, #ffffff08);
+    border: 2px solid rgba(255,255,255,0.2);
+    margin: 40px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+  }
+
+  /* Buttons container */
+  .actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 40px 20px;
+  }
+
+  .actions button {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    transition: transform 0.2s ease;
+  }
+
+  .actions button:hover {
+    transform: scale(1.1);
+  }
+
+  .accept {
+    background: linear-gradient(180deg, #22c55e, #16a34a);
+  }
+
+  .reject {
+    background: linear-gradient(180deg, #ef4444, #b91c1c);
+  }
+
+  /* Animation for ringing text */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.05); }
+  }
+  .ringing {
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+  <div class="caller-info">
+    <div class="caller-photo">👤</div>
+    <div class="caller-name" id="incomingName">Incoming Call</div>
+    <div class="status ringing">Ringing...</div>
+  </div>
+
+  <div class="actions">
+    <button id="rejectBtn" class="reject">❌</button>
+    <button id="acceptBtn" class="accept">📞</button>
+  </div>
+
+  <!-- Audio -->
+  <audio id="ringtone" src="/project/public/voice/mi_remix_xiaomi.mp3" preload="auto" loop></audio>
+  <audio id="voicePlayback" src="/project/public/voice/mi_remix_xiaomi.mp3" preload="auto"></audio>
+
+  <script>
+    // === Core functions ===
+    function startImmediate() {
+      const params = new URLSearchParams(window.location.search);
+      const name = params.get('name') || 'Dad';
+      document.getElementById('incomingName').innerText = name;
+      const r = document.getElementById('ringtone');
+      r.play().catch(e => console.warn('ring play blocked', e));
+    }
+
+    function endCall() {
+      const r = document.getElementById('ringtone');
+      r.pause(); r.currentTime = 0;
+      const v = document.getElementById('voicePlayback');
+      v.pause(); v.currentTime = 0;
+      try { if (window.opener) window.close(); } catch(e){}
+    }
+
+    function answerCall() {
+      const r = document.getElementById('ringtone');
+      try { r.pause(); r.currentTime = 0; } catch(e){}
+
+      document.querySelector('.status').textContent = "Connected...";
+      document.querySelector('.status').classList.remove('ringing');
+
+      const v = document.getElementById('voicePlayback');
+      try {
+        v.currentTime = 0;
+        v.play().catch(err => {
+          console.warn('voice play blocked', err);
+          const playBtn = document.createElement('button');
+          playBtn.textContent = 'Tap to play voice';
+          playBtn.style.position = 'fixed';
+          playBtn.style.left = '50%';
+          playBtn.style.top = '50%';
+          playBtn.style.transform = 'translate(-50%, -50%)';
+          playBtn.style.padding = '12px 18px';
+          playBtn.style.fontSize = '16px';
+          document.body.appendChild(playBtn);
+          playBtn.addEventListener('click', () => { v.play(); playBtn.remove(); });
+        });
+      } catch(e){ console.warn('voice error', e); }
+
+      v.onended = () => { try { if (window.opener) window.close(); } catch(e){} };
+    }
+
+    // Button listeners
+    document.getElementById('acceptBtn').addEventListener('click', answerCall);
+    document.getElementById('rejectBtn').addEventListener('click', endCall);
+
+    // Auto start on load
+    window.addEventListener('load', startImmediate);
+  </script>
+</body>
+</html>

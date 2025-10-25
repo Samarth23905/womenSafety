@@ -1,0 +1,37 @@
+{
+  "overall_rating": 2.5,
+  "total_locations": 2,
+  "safe_locations": 1,
+  "unsafe_locations": 1,
+  "risk_factors": [],
+  "predictions": [
+    {
+      "id": 1,
+      "location_name": "yalankha",
+      "description": null,
+      "surrounding": null,
+      "actual_rating": 0.0,
+      "safety_score": 0.0,
+      "predicted_label": "unsafe",
+      "latitude": null,
+      "longitude": null,
+      "reporter_name": "Samarth K Hosamani",
+      "created_at": "2025-10-25 07:29:59"
+    },
+    {
+      "id": 2,
+      "location_name": "yalankha",
+      "description": "jhdsbkjhdb",
+      "surrounding": "jhds, jhbbsdcjh, hdcj",
+      "actual_rating": 5.0,
+      "safety_score": 1.0,
+      "predicted_label": "safe",
+      "latitude": null,
+      "longitude": null,
+      "reporter_name": "Samarth K Hosamani",
+      "created_at": "2025-10-25 07:30:35"
+    }
+  ],
+  "status": "success",
+  "note": "Using simple rating-based prediction due to small dataset"
+}
